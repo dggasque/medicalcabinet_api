@@ -7,8 +7,11 @@ verify_ssl = true
 
 [packages]
 flask = "*"
-pickle = "*"
-python-dotenv = "*"
+basilica = "*"
+numpy = "*"
+pandas = "*"
+scipy = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.7"
