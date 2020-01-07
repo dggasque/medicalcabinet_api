@@ -1,6 +1,9 @@
 """Code for our api app"""
 from flask import Flask, jsonify, request
-
+import basilica
+import numpy as np
+import pandas as pd
+from scipy import spatial
 app = Flask(__name__)
 
 user_input = "text, Relaxed, Violet, Aroused, Creative, Happy, Energetic, Flowery, Diesel"
@@ -11,10 +14,6 @@ def predict(user_input):
     # install basilica
     #!pip install basilica
 
-    import basilica
-    import numpy as np
-    import pandas as pd
-    from scipy import spatial
 
     # get data
     #!wget https://raw.githubusercontent.com/MedCabinet/ML_Machine_Learning_Files/master/med1.csv
@@ -105,15 +104,102 @@ def strains():
     # validate input (optional)
     assert isinstance(text, str)
 
-    # deserialize the pretrained model
-    #with open('medembedv2.pkl', 'rb') as mod:
-        #model = pickle.load(mod)
 
     # predict
     output = predict(text)
 
-    # dictionary output for json
-    #send_back = {'prediction': output}
 
     # give output to sender.
     return output
+
+@app.route('/symptom', methods=['Post'])
+def symptom():
+    """ a route, expects json object with 1 key """
+
+    # receive input
+    lines = request.get_json(force=True)
+
+    # get data from json
+    text = lines['input']  # json keys to be determined
+
+    # validate input (optional)
+    assert isinstance(text, str)
+
+
+    # predict
+    output = predict_symptom(text)
+
+
+    # give output to sender.
+    return output
+
+# user input
+user_input_symptom = "pain"
+
+
+
+
+# ominbus function
+def predict_symptom(user_input_symptom):
+
+    # turn data into dataframe
+    df = pd.read_csv('symptoms_medcab3.csv')
+    
+    # get pickled trained embeddings for med cultivars
+    unpickled_df_test2 = pd.read_pickle("./symptommedembedv1.pkl")
+
+    # Part 1
+    # maybe make a function to perform the last few steps
+    # a function to calculate_user_text_embedding
+    # to save the embedding value in session memory
+    user_input_embedding2 = 0
+
+    def calculate_user_text_embedding(input, user_input_embedding2):
+
+        # setting a string of two sentences for the algo to compare
+        sentences = [input]
+
+        # calculating embedding for both user_entered_text and for features
+        with basilica.Connection('36a370e3-becb-99f5-93a0-a92344e78eab') as c:
+            user_input_embedding = list(c.embed_sentences(sentences))
+        
+        return user_input_embedding2
+
+    # run the function to save the embedding value in session memory
+    user_input_embedding2 = calculate_user_text_embedding(user_input_symptom, user_input_embedding2)
+
+
+
+
+    # part 2
+    score = 0
+
+    def score_user_input_from_stored_embedding_from_stored_values(input, score, row1, user_input_embedding):
+
+        # obtains pre-calculated values from a pickled dataframe of arrays
+        embedding_stored2 = unpickled_df_test2.loc[row1, 0]
+        
+        # calculates the similarity of user_text vs. product description
+        score = 1 - spatial.distance.cosine(embedding_stored2, user_input_embedding2)
+
+        # returns a variable that can be used outside of the function
+        return score
+
+
+    # Part 3
+    for i in range(2351):
+        # calls the function to set the value of 'score'
+        # which is the score of the user input
+        score = score_user_input_from_stored_embedding_from_stored_values(user_input_symptom, score, i, user_input_embedding2)
+        
+        #stores the score in the dataframe
+        df.loc[i,'score'] = score
+
+    # Part 4: returns all data for the top 5 results as a json obj
+    df_big_json = df['score'].sort_values(ascending=False)
+    df_big_json = df.copy()
+    df_big_json = df_big_json[:5]
+    df_big_json = df_big_json.to_json(orient='columns')
+
+    # Part 5: output
+    return df_big_json
