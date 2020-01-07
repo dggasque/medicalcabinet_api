@@ -76,53 +76,16 @@ def predict(user_input):
         #stores the score in the dataframe
         df.loc[i,'score'] = score
 
+
     # Part 4
-    #output = df['Strain'].groupby(df['score']).value_counts().nlargest(6, keep='last')
-    #output = df['Strain'].groupby(df['score']).value_counts().nlargest(6, keep='last')
-
-    #df_results = df['Strain'].groupby(df['score']).value_counts().nlargest(6, keep='last')
-    just_id_output = df['score'].sort_values(ascending=False)
-
-    just_id_output = just_id_output.head(5)
-
-    #print(output)
-    #print(output[1:])
-    #output_string = str(output)
-    #print(type(output))
-    #print(output.shape)
-    #print(output_string)
-    #output_regex = re.sub(r'[^a-zA-Z ^0-9 ^.]', '', output_string)
-    #print(output_regex)
-    #output_string_clipped = output_regex[50:-28]
-    #print(output_string_clipped)
-
-    # json output
-    # https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.to_json.html
-    #output_json = output.to_json(orient='index')
-    #print(output_json)
+    df_big_json = df['score'].sort_values(ascending=False)
+    df_big_json = df.copy()
+    # https://chrisalbon.com/python/data_wrangling/pandas_dropping_column_and_rows/
+    df_big_json = df_big_json[:5]
+    df_big_json = df_big_json.to_json(orient='columns')
     
-    output_ID = just_id_output.to_json(orient='index')
-    #print(output_ID)
-
-    #output_json = just_id_output.to_json(orient='split')
-    #print(output_json)
-
-    #output_values_series = pd.Series(output_json)
-    #print(output_values_series)
-
-    #output_json = output_string_clipped.to_json(orient='split')
-    #print(output_json)
-
-    #print(type(output_json))
-    #print(*output_json)
-    #output_json = output.to_json(orient='records')
-    #print(output_json)
-    #output_json = output.to_json(orient='columns')
-    #print(output_json)
-    #output_json = output.to_json(orient='values')
-    #print(output_json)
-
-    return output_ID
+    # Part 5: output
+    return df_big_json
 
 @app.route('/strains', methods=['Post'])
 def strains():
