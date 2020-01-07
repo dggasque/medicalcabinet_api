@@ -87,6 +87,11 @@ def predict(user_input):
     # Part 5: output
     return df_big_json
 
+
+@app.route('/')
+def root():
+    return "We have the best API"
+
 @app.route('/strains', methods=['Post'])
 def strains():
     """ a route, expects json object with 1 key """
