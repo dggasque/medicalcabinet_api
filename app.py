@@ -90,7 +90,7 @@ def predict(user_input):
 
 @app.route('/')
 def root():
-    return "We have the best API"
+    return "We have the best API!"
 
 @app.route('/strains', methods=['Post'])
 def strains():
