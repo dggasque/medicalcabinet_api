@@ -1,1 +1,1 @@
-web: gunicorn app:medicab_api
+web: gunicorn app:medcab_api
