@@ -6,7 +6,7 @@ import pandas as pd
 from scipy import spatial
 app = Flask(__name__)
 
-user_input = "text, Relaxed, Violet, Aroused, Creative, Happy, Energetic, Flowery, Diesel"
+#user_input = "text, Relaxed, Violet, Aroused, Creative, Happy, Energetic, Flowery, Diesel"
 
 # ominbus function
 def predict(user_input):
@@ -134,7 +134,7 @@ def symptom():
     return output
 
 # user input
-user_input_symptom = "pain"
+#user_input_symptom = "pain"
 
 
 
@@ -143,10 +143,10 @@ user_input_symptom = "pain"
 def predict_symptom(user_input_symptom):
 
     # turn data into dataframe
-    df = pd.read_csv('symptoms_medcab3.csv')
+    df = pd.read_csv('symptoms6_medcab3.csv')
     
     # get pickled trained embeddings for med cultivars
-    unpickled_df_test2 = pd.read_pickle("./symptommedembedv1.pkl")
+    unpickled_df_test2 = pd.read_pickle("./symptommedembedv6.pkl")
 
     # Part 1
     # maybe make a function to perform the last few steps
