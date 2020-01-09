@@ -153,7 +153,7 @@ user_input = "text, Relaxed, Violet, Aroused, Creative, Happy, Energetic, Flower
 def predict(user_input):
 
     # getting data
-    df = pd.read_csv('med1.csv')
+    df = pd.read_csv('symptoms8_medcab3.csv')
 
     #effcts unpickling file of embedded cultivar descriptions
     unpickled_df_test = pd.read_pickle("./medembedv2.pkl")
@@ -207,6 +207,7 @@ def predict(user_input):
 
     # Part 4: returns all data for the top 5 results as a json obj
     df_big_json = df.sort_values(by='score', ascending=False)
+    df_big_json = df_big_json.drop(['Unnamed: 0', 'Unnamed: 0.1'], axis = 1)
     df_big_json = df_big_json[:5]
     df_big_json = df_big_json.to_json(orient='columns')
 
